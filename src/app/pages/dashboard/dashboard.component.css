@@ -142,3 +142,63 @@ nav { flex: 1; }
   padding: 10px 24px; border-radius: 8px; font-size: 14px;
   font-weight: 500; cursor: pointer;
 }
+.trade-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-buy {
+  background: #38a169;
+  color: white;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-buy:hover { background: #2f855a; }
+
+.btn-sell {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-sell:hover { background: #c53030; }
+
+.trade-form-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.trade-form-modal .order-field select,
+.trade-form-modal .order-field input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.btn-sell-confirm {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}

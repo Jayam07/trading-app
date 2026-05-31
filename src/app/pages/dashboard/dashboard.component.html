@@ -39,7 +39,7 @@
       </div>
       <div class="card">
         <p class="card-label">Open Positions</p>
-        <p class="card-value">{{ positions.length }}</p>
+        <p class="card-value">{{ trades.length }}</p>
         <p class="card-sub">Active trades</p>
       </div>
       <div class="card positive">
@@ -88,40 +88,48 @@
     <div class="section">
       <h2 class="section-title">Open Positions</h2>
       <table class="table">
-        <thead>
-          <tr>
-            <th>Symbol</th>
-            <th>Type</th>
-            <th>Qty</th>
-            <th>LTP</th>
-            <th>P&L</th>
-            <th>P&L %</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let pos of positions">
-            <td class="symbol">{{ pos.symbol }}</td>
-            <td>
-              <span class="badge" [class.call]="pos.type === 'CALL'" [class.put]="pos.type === 'PUT'">
-                {{ pos.type }}
-              </span>
-            </td>
-            <td>{{ pos.qty }}</td>
-            <td>₹{{ pos.ltp }}</td>
-            <td [class.profit]="pos.pnl > 0" [class.loss]="pos.pnl < 0">
-              {{ pos.pnl > 0 ? '+' : '' }}₹{{ pos.pnl }}
-            </td>
-            <td [class.profit]="pos.pnlPct > 0" [class.loss]="pos.pnlPct < 0">
-              {{ pos.pnlPct > 0 ? '+' : '' }}{{ pos.pnlPct }}%
-            </td>
-            <td>
-              <span class="status" [class.profit-bg]="pos.pnl > 0" [class.loss-bg]="pos.pnl < 0">
-                {{ pos.pnl > 0 ? '✅ Profit' : '❌ Loss' }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
+       <thead>
+  <tr>
+    <th>Symbol</th>
+    <th>Type</th>
+    <th>Qty</th>
+    <th>Entry Price</th>
+    <th>P&L</th>
+    <th>Date</th>
+    <th>Status</th>
+  </tr>
+</thead>
+       <tbody>
+  <tr *ngIf="loading">
+    <td colspan="7" style="text-align:center; padding: 2rem; color: #888;">
+      Loading trades...
+    </td>
+  </tr>
+  <tr *ngIf="!loading && trades.length === 0">
+    <td colspan="7" style="text-align:center; padding: 2rem; color: #888;">
+      No trades found.
+    </td>
+  </tr>
+  <tr *ngFor="let trade of trades">
+    <td class="symbol">{{ trade.Symbol }}</td>
+    <td>
+      <span class="badge" [class.call]="trade.TradeType === 'CALL'" [class.put]="trade.TradeType === 'PUT'">
+        {{ trade.TradeType }}
+      </span>
+    </td>
+    <td>{{ trade.Quantity }}</td>
+    <td>₹{{ trade.EntryPrice }}</td>
+    <td [class.profit]="trade.PnL > 0" [class.loss]="trade.PnL < 0">
+      {{ trade.PnL > 0 ? '+' : '' }}₹{{ trade.PnL }}
+    </td>
+    <td>{{ trade.TradeDate | date:'dd MMM yyyy' }}</td>
+    <td>
+      <span class="status" [class.profit-bg]="trade.PnL > 0" [class.loss-bg]="trade.PnL < 0">
+        {{ trade.PnL > 0 ? '✅ Profit' : '❌ Loss' }}
+      </span>
+    </td>
+  </tr>
+</tbody>
       </table>
     </div>
 
@@ -147,6 +155,59 @@
       <div class="warning-actions">
         <button class="btn-cancel" (click)="cancelOrder()">❌ Cancel Order</button>
         <button class="btn-confirm" (click)="confirmOrder()">✅ Place Anyway</button>
+        <!-- Buy/Sell buttons -->
+<div class="trade-actions">
+  <button class="btn-buy" (click)="openTradeModal('BUY')">📈 Buy</button>
+  <button class="btn-sell" (click)="openTradeModal('SELL')">📉 Sell</button>
+</div>
+<!-- Trade Modal -->
+<div class="overlay" *ngIf="showTradeModal">
+  <div class="warning-modal">
+    <div class="warning-icon">{{ tradeAction === 'BUY' ? '📈' : '📉' }}</div>
+    <h2 [style.color]="tradeAction === 'BUY' ? '#38a169' : '#e53e3e'">
+      {{ tradeAction }} Order
+    </h2>
+
+    <div class="trade-form-modal">
+      <div class="order-field">
+        <label>Symbol</label>
+        <select [(ngModel)]="tradeForm.symbol">
+          <option>NIFTY 24000 CE</option>
+          <option>BANKNIFTY 52000 PE</option>
+          <option>RELIANCE 2800 CE</option>
+          <option>NIFTY 23800 PE</option>
+        </select>
+      </div>
+
+      <div class="order-field">
+        <label>Type</label>
+        <select [(ngModel)]="tradeForm.tradeType">
+          <option>CALL</option>
+          <option>PUT</option>
+        </select>
+      </div>
+
+      <div class="order-field">
+        <label>Quantity</label>
+        <input type="number" [(ngModel)]="tradeForm.quantity" />
+      </div>
+
+      <div class="order-field">
+        <label>Entry Price (₹)</label>
+        <input type="number" [(ngModel)]="tradeForm.entryPrice" />
+      </div>
+    </div>
+
+    <div class="warning-actions" style="margin-top: 1.5rem;">
+      <button class="btn-cancel" (click)="closeTradeModal()">Cancel</button>
+      <button 
+        [class]="tradeAction === 'BUY' ? 'btn-confirm' : 'btn-sell-confirm'"
+        (click)="submitTrade()">
+        {{ tradeAction === 'BUY' ? '📈 Place Buy' : '📉 Place Sell' }}
+      </button>
+    </div>
+  </div>
+</div>
       </div>
     </div>
   </div>
