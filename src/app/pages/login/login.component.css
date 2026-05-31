@@ -97,3 +97,8 @@ input:focus {
   text-decoration: none;
   font-weight: 500;
 }
+.error {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
